@@ -52,8 +52,6 @@
     };
   };
 
-  # FIXME: Add the rest of your current configuration
-
   # TODO: Set your hostname
   networking.hostName = "nixos";
 
@@ -87,6 +85,7 @@
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm.wayland = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -94,8 +93,38 @@
     xkbVariant = "";
   };
 
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true; # so that gtk works properly
+    extraPackages = with pkgs; [
+      swaylock
+      swayidle
+      wl-clipboard
+      wf-recorder
+      mako # notification daemon
+      grim
+     #kanshi
+      slurp
+      alacritty # Alacritty is the default terminal in the config
+      dmenu # Dmenu is the default in the config but i recommend wofi since its wayland native
+    ];
+    extraSessionCommands = ''
+      export SDL_VIDEODRIVER=wayland
+      export QT_QPA_PLATFORM=wayland
+      export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+      export _JAVA_AWT_WM_NONREPARENTING=1
+      export MOZ_ENABLE_WAYLAND=1
+    '';
+  };
+
+  #programs.waybar.enable = true;
+
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.dbus.packages = [ pkgs.gcr ];
+  # Enable DBUS service
+  security.polkit.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -109,10 +138,32 @@
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
 
+
+
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
+
+  # Fonts
+  # Fonts
+  fonts.fonts = with pkgs; [
+    fira-code
+    fira
+    cooper-hewitt
+    ibm-plex
+    jetbrains-mono
+    iosevka
+    # bitmap
+    spleen
+    fira-code-symbols
+    powerline-fonts
+    nerdfonts
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    twemoji-color-font
+  ];
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users.raranaga = {
@@ -122,6 +173,32 @@
     packages = with pkgs; [
       firefox
     #  thunderbird
+      libnotify
+      wl-clipboard
+      wlr-randr
+      wayland
+      wayland-scanner
+      wayland-utils
+      egl-wayland
+      wayland-protocols
+      glfw-wayland
+      xwayland
+      pkgs.qt6.qtwayland
+      cinnamon.nemo
+      polkit_gnome
+      networkmanagerapplet
+      wev
+      wf-recorder
+      alsa-lib
+      alsa-utils
+      flac
+      pulsemixer
+      linux-firmware
+      sshpass
+      lxappearance
+      imagemagick
+      flameshot
+      grim
     ];
   };
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
