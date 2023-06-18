@@ -120,7 +120,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.raranaga = {
     isNormalUser = true;
-    extraGroups = [ "wheel, networkmanager, audio, docker " ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "audio" "docker" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       firefox
       tree
