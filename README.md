@@ -6,9 +6,9 @@ To use this repository as base configuration for my desktop running:
 
 ### NixOS Linux
 
-- Manual NixOS Installation
+### Manual NixOS Installation
   - Enable Wifi
-  ```shell
+  ```sh-session
   $ sudo -i
   $ systemctl start wpa_supplicant
   $ wpa_cli
@@ -20,7 +20,7 @@ To use this repository as base configuration for my desktop running:
   $ quit
   ```
   - Partitions
-  ```shell
+  ```sh-session
   $ parted
   $ select /dev/sda
   $ mklabel gpt
@@ -30,14 +30,14 @@ To use this repository as base configuration for my desktop running:
   $ set 3 esp on
   ```
   - Formatting
-  ```shell
+  ```sh-session
   $ mkfs.ext4 -L nixos /dev/sda1
   $ mkswap -L swap /dev/sda2
   $ mkfs.fat -F 32 -n boot /dev/sda3
   ```
 
   - Installation
-  ```shell
+  ```sh-session
   $ mount /dev/disk/by-label/nixos /mnt
   $ mkdir -p /mnt/boot
   $ mount /dev/disk/by-label/boot /mnt/boot
@@ -45,57 +45,56 @@ To use this repository as base configuration for my desktop running:
   $ nixos-generate-config --root /mnt
   $ nano /mnt/etc/nixos/configuration.nix
   ```
-  - Uncomment the following line to enable NetworkManager
-  ```shell
+  Uncomment the following line to enable NetworkManager
+  ```sh-session
   # networking.networkmanager.enable = true;
   ```
-  - Add git to packages
-  ```shell
+  Add git to packages
+  ```sh-session
   environment.systemPackages = with pkgs; [
     git
   ];
-  ``` 
-- Configuration
+  ```
+### Configuration
   - Connect to wifi via nmcli
-  ```shell
-  nmcli device wifi connect "myhomenetwork" --ask
-  ```  
-  - Clone repo 
-  ```shell
+  ```sh-session
+  $ nmcli device wifi connect "myhomenetwork" --ask
+  ```
+  - Clone repo
+  ```sh-session
   $ git clone https://github.com/ricardoaranaga/nix-config.git
   ```
   - Copy configuration.nix to /etc/nixos/
-  ```shell
+  ```sh-session
   $ sudo cp nix-config/configuration.nix /etc/nixos/
   ```
   - Rebuild system
-  ```shell
+  ```sh-session
   $ nixos-rebuild switch
   ```
   - Prepare initial Home Manager configuration
-  ```shell
+  ```sh-session
   $ nix run home-manager/master -- init --switch
   ```
   - Replace home.nix and add the 'apps' folder to .config/home-manager/
-  ```shell
+  ```sh-session
   $ cp nix-config/home-manager/* ~/.config/home-manager/
   ```
   - Build config files with home-manager
-  ```shell
+  ```sh-session
   $ home-manager switch
   ```
-- Reboot
 
-### Directory layout 
+### Reboot
+
+### Directory layout
 
 - `home-manager`: home-manager config
 - `configuration.nix`: nixos modules and inital packages
 
-## Tips
+## To free up disk space,
 
-- To free up disk space,
-    ```sh-session
+   ```sh-session
     sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2
     sudo nixos-rebuild boot
     ```
-- To autoformat the project tree using nixpkgs-fmt, run `nix fmt`.
